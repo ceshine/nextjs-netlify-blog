@@ -1,19 +1,16 @@
 {
-  "base_url": "https://wutali-nextjs-netlify-blog.netlify.app",
-  "site_title": "Next.js Netlify Blog",
-  "site_description": "Next.js blog template for Netlify",
+  "base_url": "https://fun.ceshine.net",
+  "site_title": "Random Ramblings on the Spectrum",
+  "site_description": "A blog for me to rant and be a judgemental jerk.",
   "site_keywords": [
     {
-      "keyword": "Next.js"
+      "keyword": "Blog"
     },
     {
-      "keyword": "Netlify"
-    },
-    {
-      "keyword": "React"
+      "keyword": "Entertainment"
     }
   ],
   "posts_per_page": 5,
-  "twitter_account": "@my-account",
-  "github_account": "wutali"
+  "twitter_account": "@ceshine_en",
+  "github_account": "ceshine"
 }
