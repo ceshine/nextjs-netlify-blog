@@ -1,17 +1,23 @@
-import { PostContent } from "../lib/posts";
+import matter from "gray-matter";
 import Date from "./Date";
 import Link from "next/link";
-import { parseISO } from "date-fns";
+// import { parseISO } from "date-fns";
+import { Post } from "../utils/mdxUtils";
 
 type Props = {
-  post: PostContent;
+  post: Post;
 };
+
 export default function PostItem({ post }: Props) {
+  const { content, data } = matter(post.source);
   return (
-    <Link href={"/posts/" + post.slug}>
+    <Link
+      as={`/posts/${post.filePath.replace(/\.mdx?$/, "")}`}
+      href={`/posts/[slug]`}
+    >
       <a>
-        <Date date={parseISO(post.date)} />
-        <h2>{post.title}</h2>
+        <Date date={data.date} />
+        <h2>{data.title}</h2>
         <style jsx>
           {`
             a {

@@ -1,17 +1,18 @@
 import React from "react";
-import { PostContent } from "../lib/posts";
 import { TagContent } from "../lib/tags";
 import PostItem from "./PostItem";
 import Pagination from "./Pagination";
+import { Post } from "../utils/mdxUtils";
 
 type Props = {
-  posts: PostContent[];
+  posts: Post[];
   tag: TagContent;
   pagination: {
     current: number;
     pages: number;
   };
 };
+
 export default function TagPostList({ posts, tag, pagination }: Props) {
   return (
     <div className={"container"}>
@@ -19,9 +20,9 @@ export default function TagPostList({ posts, tag, pagination }: Props) {
         All posts / <span>{tag.name}</span>
       </h1>
       <ul>
-        {posts.map((it, i) => (
-          <li key={i}>
-            <PostItem post={it} />
+        {posts.map((post, idx) => (
+          <li key={idx}>
+            <PostItem post={post} />
           </li>
         ))}
       </ul>

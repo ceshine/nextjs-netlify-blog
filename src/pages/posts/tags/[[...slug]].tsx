@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+import matter from "gray-matter";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Layout from "../../../components/Layout";
 import BasicMeta from "../../../components/meta/BasicMeta";
@@ -8,9 +11,10 @@ import config from "../../../lib/config";
 import { countPosts, listPostContent, PostContent } from "../../../lib/posts";
 import { getTag, listTags, TagContent } from "../../../lib/tags";
 import Head from "next/head";
+import { getTaggedPosts, Post } from "../../../utils/mdxUtils";
 
 type Props = {
-  posts: PostContent[];
+  posts: Post[];
   tag: TagContent;
   page?: string;
   pagination: {
@@ -18,6 +22,7 @@ type Props = {
     pages: number;
   };
 };
+
 export default function Index({ posts, tag, pagination, page }: Props) {
   const url = `/posts/tags/${tag.name}` + (page ? `/${page}` : "");
   const title = tag.name;
@@ -33,34 +38,33 @@ export default function Index({ posts, tag, pagination, page }: Props) {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const queries = params.slug as string[];
-  const [slug, page] = [queries[0], queries[1]];
-  const posts = listPostContent(
-    page ? parseInt(page as string) : 1,
-    config.posts_per_page,
-    slug
-  );
+  const [slug, pageStr] = [queries[0], queries[1]];
+  const page = parseInt(pageStr as string) || 1;
   const tag = getTag(slug);
+  const taggedPosts = getTaggedPosts(slug);
   const pagination = {
-    current: page ? parseInt(page as string) : 1,
-    pages: Math.ceil(countPosts(slug) / config.posts_per_page),
+    current: page,
+    pages: Math.ceil(taggedPosts.length / config.posts_per_page),
   };
-  const props: {
-    posts: PostContent[];
-    tag: TagContent;
-    pagination: { current: number; pages: number };
-    page?: string;
-  } = { posts, tag, pagination };
-  if (page) {
-    props.page = page;
-  }
+  const posts = getTaggedPosts(slug).slice(
+    (page - 1) * config.posts_per_page,
+    page * config.posts_per_page
+  );
+
   return {
-    props,
+    props: {
+      page,
+      posts: posts,
+      tag,
+      pagination,
+    },
   };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths = listTags().flatMap((tag) => {
-    const pages = Math.ceil(countPosts(tag.slug) / config.posts_per_page);
+    const taggedPosts = getTaggedPosts(tag.slug);
+    const pages = Math.ceil(taggedPosts.length / config.posts_per_page);
     return Array.from(Array(pages).keys()).map((page) =>
       page === 0
         ? {

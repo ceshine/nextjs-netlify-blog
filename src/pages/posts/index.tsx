@@ -5,12 +5,12 @@ import OpenGraphMeta from "../../components/meta/OpenGraphMeta";
 import TwitterCardMeta from "../../components/meta/TwitterCardMeta";
 import PostList from "../../components/PostList";
 import config from "../../lib/config";
-import { countPosts, listPostContent, PostContent } from "../../lib/posts";
 import { listTags, TagContent } from "../../lib/tags";
 import Head from "next/head";
+import { posts as allPosts, Post } from '../../utils/mdxUtils'
 
 type Props = {
-  posts: PostContent[];
+  posts: Post[];
   tags: TagContent[];
   pagination: {
     current: number;
@@ -31,12 +31,14 @@ export default function Index({ posts, tags, pagination }: Props) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const posts = listPostContent(1, config.posts_per_page);
-  const tags = listTags();
+  const tags = listTags()
   const pagination = {
     current: 1,
-    pages: Math.ceil(countPosts() / config.posts_per_page),
-  };
+    pages: Math.ceil(allPosts.length / config.posts_per_page),
+  };  
+  const posts = allPosts.slice(
+    0, config.posts_per_page
+  )
   return {
     props: {
       posts,
@@ -44,4 +46,5 @@ export const getStaticProps: GetStaticProps = async () => {
       pagination,
     },
   };
-};
+}
+

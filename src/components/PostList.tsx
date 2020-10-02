@@ -4,9 +4,10 @@ import PostItem from "./PostItem";
 import TagLink from "./TagLink";
 import Pagination from "./Pagination";
 import { TagContent } from "../lib/tags";
+import { Post } from "../utils/mdxUtils";
 
 type Props = {
-  posts: PostContent[];
+  posts: Post[];
   tags: TagContent[];
   pagination: {
     current: number;
@@ -18,9 +19,9 @@ export default function PostList({ posts, tags, pagination }: Props) {
     <div className={"container"}>
       <div className={"posts"}>
         <ul className={"post-list"}>
-          {posts.map((it, i) => (
-            <li key={i}>
-              <PostItem post={it} />
+          {posts.map((post, idx) => (
+            <li key={idx}>
+              <PostItem post={post} />
             </li>
           ))}
         </ul>
