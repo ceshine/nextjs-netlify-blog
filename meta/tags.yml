@@ -5,3 +5,5 @@ tags:
     name: mdx
   - slug: markdown
     name: markdown
+  - slug: game
+    name: Games
