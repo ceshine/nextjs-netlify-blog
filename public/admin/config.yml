@@ -110,6 +110,9 @@ collections:
         format: "YYYY-MM-DD"
         dateFormat: "YYYY-MM-DD"
         timeFormat: false
+      - label: "Cover"
+        name: "cover"
+        widget: "string"
       - label: Author
         name: "author"
         widget: relation

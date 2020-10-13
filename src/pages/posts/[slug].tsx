@@ -36,6 +36,7 @@ type Props = {
   tags: string[];
   author: string;
   source: string;
+  cover: string;
 };
 
 export default function Index({
@@ -46,6 +47,7 @@ export default function Index({
   tags,
   description,
   source,
+  cover
 }: Props) {
   const keywords = tags.map((it) => getTag(it).name);
   const authorName = getAuthor(author).name;
@@ -62,11 +64,13 @@ export default function Index({
       <TwitterCardMeta
         url={`/posts/${slug}`}
         title={title}
+        image={cover}
         description={description}
       />
       <OpenGraphMeta
         url={`/posts/${slug}`}
         title={title}
+        image={cover}
         description={description}
       />
       <JsonLdMeta
@@ -275,6 +279,7 @@ export async function getStaticProps({ params }) {
       author,
       tags,
       description: description || "",
+      cover: data.cover || ""
     },
   };
 }
