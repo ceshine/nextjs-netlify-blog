@@ -2,8 +2,8 @@ import fs from "fs";
 import path, { parse } from "path";
 import matter from "gray-matter";
 import { parseISO, formatISO } from "date-fns";
-import hydrate from "next-mdx-remote/hydrate";
-import renderToString from "next-mdx-remote/render-to-string";
+import { MDXRemote, type MDXRemoteSerializeResult } from "next-mdx-remote";
+import { serialize } from "next-mdx-remote/serialize";
 import Head from "next/head";
 import Link from "next/link";
 import rehypePrism from "@mapbox/rehype-prism";
@@ -35,7 +35,7 @@ type Props = {
   description: string;
   tags: string[];
   author: string;
-  source: string;
+  source: MDXRemoteSerializeResult;
   cover: string;
 };
 
@@ -51,7 +51,6 @@ export default function Index({
 }: Props) {
   const keywords = tags.map((it) => getTag(it).name);
   const authorName = getAuthor(author).name;
-  const content = hydrate(source, { components });
   const dateParsed = parseISO(date);
   return (
     <Layout>
@@ -92,7 +91,9 @@ export default function Index({
               </div>
             </div>
           </header>
-          <div className={styles.content}>{content}</div>
+          <div className={styles.content}>
+            <MDXRemote {...source} components={components} />
+          </div>
           <ul className={"tag-list"}>
             {tags.map((it, i) => (
               <li key={i}>
@@ -260,14 +261,11 @@ export async function getStaticProps({ params }) {
   const source = fs.readFileSync(postFilePath);
 
   const { content, data } = matter(source);
-  const mdxSource = await renderToString(content, {
-    components,
-    // Optionally pass remark/rehype plugins
+  const mdxSource = await serialize(content, {
     mdxOptions: {
       remarkPlugins: [],
-      rehypePlugins: [rehypePrism],
+      rehypePlugins: [rehypePrism as any],
     },
-    // scope: data,
   });
   const { title, date, slug, author, tags, description } = data;
   return {
